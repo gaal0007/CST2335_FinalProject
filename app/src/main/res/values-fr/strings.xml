@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="searchActivityButtonString">Rechercher</string>
+    <string name="MainActivityTitle">NASA Imagerie de la Terre</string>
+    <string name="favouritesActivityButtonString">Favourites</string>
+</resources>
