@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinalProject">
         <activity
+            android:name=".DisplayResultsActivity"
+            android:exported="true" />
+        <activity
             android:name=".FavouritesActivity"
             android:exported="true" />
         <activity

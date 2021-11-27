@@ -5,30 +5,10 @@
 
     <ImageView
         android:id="@+id/favouriteImage"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:scaleType="fitCenter"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:id="@+id/favouriteLatitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/favouriteImage"
-        android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:id="@+id/favouriteLongitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/favouriteLatitude"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:id="@+id/favouriteDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/favouriteLongitude"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

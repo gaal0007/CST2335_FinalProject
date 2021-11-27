@@ -17,6 +17,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -33,9 +35,11 @@ public class FavouritesActivity extends AppCompatActivity {
         Favourite demoFavourite = new Favourite();
         demoFavourite.favouriteId = 1;
         demoFavourite.image = drawableToBitmap(getDrawable(R.drawable.imagery_demo));
-        demoFavourite.latitude = "Latitude: 1.5";
-        demoFavourite.longitude = "Longitude: 100.75";
-        demoFavourite.date = "Date: 2014-02-01";
+        demoFavourite.latitude = "1.5";
+        demoFavourite.longitude = "100.75";
+        demoFavourite.date = "2014-02-01";
+        favourites.add(demoFavourite);
+        favourites.add(demoFavourite);
         favourites.add(demoFavourite);
         //------------------------------------------
 
@@ -43,6 +47,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
         ListView favouritesListView = findViewById(R.id.favouritesListView);
         favouritesListView.setAdapter(favouritesListAdapter);
+
         favouritesListView.setOnItemLongClickListener((p, b, pos, id) -> {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle("Delete")
@@ -55,6 +60,12 @@ public class FavouritesActivity extends AppCompatActivity {
                 .setNegativeButton("No", (click, arg) -> { })
                 .create().show();
             return true;
+        });
+
+        favouritesListView.setOnItemClickListener((p, b, pos, id) -> {
+            Snackbar.make(favouritesListView, "Latitude: " + favourites.get(pos).latitude
+                    + " Longitude: " + favourites.get(pos).longitude
+                    + " Date: " + favourites.get(pos).date, Snackbar.LENGTH_LONG).show();
         });
     }
 
@@ -84,22 +95,16 @@ public class FavouritesActivity extends AppCompatActivity {
             newView = inflater.inflate(R.layout.layout_favourite, parent, false);
 
             ImageView image = newView.findViewById(R.id.favouriteImage);
-            TextView latitude = newView.findViewById(R.id.favouriteLatitude);
-            TextView longitude = newView.findViewById(R.id.favouriteLongitude);
-            TextView date = newView.findViewById(R.id.favouriteDate);
 
             Favourite myFavourite = favourites.get(position);
             image.setImageBitmap(myFavourite.image);
-            latitude.setText(myFavourite.latitude);
-            longitude.setText(myFavourite.longitude);
-            date.setText(myFavourite.date);
 
             return newView;
         }
     }
 
     // TODO: Get rid of this when you don't need it anymore
-    // Yes, this is from StackOverflow. No, it won't be in the final. Just need it for a demo
+    // Yes, this is from StackOverflow. No, it won't be in the final. Just need it for testing purposes
     public static Bitmap drawableToBitmap (Drawable drawable) {
         Bitmap bitmap = null;
 
