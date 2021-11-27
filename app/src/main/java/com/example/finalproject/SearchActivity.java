@@ -17,7 +17,7 @@ public class SearchActivity extends AppCompatActivity {
 
         Intent goToDisplayResultsActivity = new Intent(this, DisplayResultsActivity.class);
 
-        displayResultsButton.findViewById(R.id.displayResultsButton);
+        displayResultsButton = findViewById(R.id.displayResultsButton);
         displayResultsButton.setOnClickListener(bt -> startActivity(goToDisplayResultsActivity));
     }
 }
