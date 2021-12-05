@@ -3,4 +3,7 @@
     <string name="searchActivityButtonString">Rechercher</string>
     <string name="MainActivityTitle">NASA Imagerie de la Terre</string>
     <string name="favouritesActivityButtonString">Favourites</string>
+    <string name="help">Help</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
 </resources>
