@@ -8,9 +8,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -20,9 +22,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -41,6 +45,8 @@ public class DisplayResultsActivity extends AppCompatActivity implements Navigat
     TextView resultLatitudeView;
     TextView resultLongitudeView;
     TextView resultDateView;
+    Button addToFavouritesButton;
+    String imageName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,9 @@ public class DisplayResultsActivity extends AppCompatActivity implements Navigat
         resultLatitudeView = findViewById(R.id.resultLatitude);
         resultLongitudeView = findViewById(R.id.resultLongitude);
         resultDateView = findViewById(R.id.resultDate);
+        addToFavouritesButton = findViewById(R.id.addToFavouritesButton);
+        addToFavouritesButton.setOnClickListener(btn -> addToFavourites());
+        imageName = "";
 
         Toolbar toolbar = findViewById(R.id.resultsToolbar);
         setSupportActionBar(toolbar);
@@ -129,6 +138,7 @@ public class DisplayResultsActivity extends AppCompatActivity implements Navigat
      */
     public Bitmap fetchBitmapFromUrl (URL url) throws IOException {
         Bitmap bitmap = null;
+        imageName = generateUUIDString();
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         connection.connect();
         int responseCode = connection.getResponseCode();
@@ -137,7 +147,7 @@ public class DisplayResultsActivity extends AppCompatActivity implements Navigat
             bitmap = BitmapFactory.decodeStream(connection.getInputStream());
         }
 
-        FileOutputStream outputStream = openFileOutput(generateUUIDString(), Context.MODE_PRIVATE);
+        FileOutputStream outputStream = openFileOutput(imageName, MODE_PRIVATE);
         bitmap.compress(Bitmap.CompressFormat.PNG, 80, outputStream);
         outputStream.flush();
         outputStream.close();
@@ -154,6 +164,36 @@ public class DisplayResultsActivity extends AppCompatActivity implements Navigat
     public String generateUUIDString() {
         String uniqueID = UUID.randomUUID().toString();
         return uniqueID;
+    }
+
+    /**
+     * Adds the current search result to a local db of favourites.
+     *
+     * @author Andrew
+     * @since 1.0
+     */
+    public void addToFavourites() {
+        //initialize the db and the access object
+        ApplicationDao dao = new ApplicationDao(this);
+        SQLiteDatabase db = dao.getWritableDatabase();
+
+        String latitude = resultLatitudeView.getText().toString();
+        String longitude = resultLongitudeView.getText().toString();
+        String date = resultDateView.getText().toString();
+        String image = imageName;
+
+        //create a ContentValues object and add the search result to it
+        ContentValues newRowValues = new ContentValues();
+        newRowValues.put(dao.COL_LATITUDE, latitude);
+        newRowValues.put(dao.COL_LONGITUDE, longitude);
+        newRowValues.put(dao.COL_DATE, date);
+        newRowValues.put(dao.COL_IMAGE, image);
+
+        //insert the new row into the database
+        db.insert(dao.TABLE_NAME, null, newRowValues);
+
+        //tell the user that the new favourite has been added
+        Toast.makeText(this, "Added to Favourites!", Toast.LENGTH_SHORT).show();
     }
 
     @Override

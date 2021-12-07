@@ -10,7 +10,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -24,35 +27,29 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class FavouritesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private ArrayList<Favourite> favourites = new ArrayList<>();
+    SQLiteDatabase db;
+    ApplicationDao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
 
-        //----Setting up a demo Favourite object----
-        Favourite demoFavourite = new Favourite();
-        demoFavourite.favouriteId = 1;
-        demoFavourite.image = drawableToBitmap(getDrawable(R.drawable.imagery_demo));
-        demoFavourite.latitude = "1.5";
-        demoFavourite.longitude = "100.75";
-        demoFavourite.date = "2014-02-01";
-        favourites.add(demoFavourite);
-        favourites.add(demoFavourite);
-        favourites.add(demoFavourite);
-        //------------------------------------------
+        ApplicationDao dao = new ApplicationDao(this);
+        db = dao.getWritableDatabase();
+
+        loadFavouritesFromDatabase();
 
         ListAdapter favouritesListAdapter = new ListAdapter();
 
@@ -66,6 +63,7 @@ public class FavouritesActivity extends AppCompatActivity implements NavigationV
                 .setPositiveButton("Yes", (click, arg) -> {
                     favourites.remove(pos);
                     favouritesListAdapter.notifyDataSetChanged();
+                    db.delete(dao.TABLE_NAME, dao.COL_ID + "= ?", new String[] {Long.toString(id)});
                     Toast.makeText(this, "Removed from Favourites", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("No", (click, arg) -> { })
@@ -91,6 +89,44 @@ public class FavouritesActivity extends AppCompatActivity implements NavigationV
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    /**
+     * Retrieves favourites data from the local db and adds it to the ListView
+     *
+     * @author Andrew
+     * @since 1.0
+     */
+    private void loadFavouritesFromDatabase() {
+        // Get the database
+
+
+        // Query the db
+        String[] columns = {dao.COL_ID, dao.COL_LATITUDE, dao.COL_LONGITUDE, dao.COL_DATE, dao.COL_IMAGE};
+        Cursor results = db.query(dao.TABLE_NAME, columns, null, null, null, null, null);
+
+        int latitudeColumnIndex = results.getColumnIndex(dao.COL_LATITUDE);
+        int longitudeColumnIndex = results.getColumnIndex(dao.COL_LONGITUDE);
+        int dateColumnIndex = results.getColumnIndex(dao.COL_DATE);
+        int imageColumnIndex = results.getColumnIndex(dao.COL_IMAGE);
+        int idColumnIndex = results.getColumnIndex(dao.COL_ID);
+
+        // Iterate over the results and add each result to the favourites array
+        while(results.moveToNext()) {
+            Favourite myFavourite = new Favourite();
+            myFavourite.favouriteId = results.getString(idColumnIndex);
+            myFavourite.latitude = results.getString(latitudeColumnIndex);
+            myFavourite.longitude = results.getString(longitudeColumnIndex);
+            myFavourite.date = results.getString(dateColumnIndex);
+            myFavourite.image = retrieveBitmapFromFileName(results.getString(imageColumnIndex));
+            favourites.add(myFavourite);
+        }
+    }
+
+    private Bitmap retrieveBitmapFromFileName(String fileName) {
+        String directory = new File(getFilesDir(), fileName).getAbsolutePath();
+        Bitmap myBitmap =  BitmapFactory.decodeFile(directory);
+        return myBitmap;
+    }
+
     private class ListAdapter extends BaseAdapter {
 
         @Override
@@ -103,10 +139,9 @@ public class FavouritesActivity extends AppCompatActivity implements NavigationV
             return "this is row " + position;
         }
 
-        // TODO: Position here should be the favourite's id from the database
         @Override
         public long getItemId(int position) {
-            return (long) position;
+            return Long.parseLong(favourites.get(position).favouriteId);
         }
 
         @Override
@@ -123,30 +158,6 @@ public class FavouritesActivity extends AppCompatActivity implements NavigationV
 
             return newView;
         }
-    }
-
-    // TODO: Get rid of this when you don't need it anymore
-    // Yes, this is from StackOverflow. No, it won't be in the final. Just need it for testing purposes
-    public static Bitmap drawableToBitmap (Drawable drawable) {
-        Bitmap bitmap = null;
-
-        if (drawable instanceof BitmapDrawable) {
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-            if(bitmapDrawable.getBitmap() != null) {
-                return bitmapDrawable.getBitmap();
-            }
-        }
-
-        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
-            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
-        } else {
-            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        }
-
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-        return bitmap;
     }
 
     @Override
@@ -176,14 +187,6 @@ public class FavouritesActivity extends AppCompatActivity implements NavigationV
                     }
                 }).create().show();
         return true;
-    }
-
-    private class Favourite {
-        double favouriteId;
-        String latitude;
-        String longitude;
-        String date;
-        Bitmap image;
     }
 
     @Override
