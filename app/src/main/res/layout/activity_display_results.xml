@@ -15,8 +15,7 @@
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/mainToolbar">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -53,7 +52,7 @@
                 android:id="@+id/addToFavouritesButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add to Favourites"
+                android:text="@string/add_to_favourites"
                 android:layout_below="@+id/resultDate"/>
 
             <ProgressBar

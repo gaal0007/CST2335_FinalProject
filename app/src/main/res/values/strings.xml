@@ -6,4 +6,14 @@
     <string name="help">Help</string>
     <string name="open">open</string>
     <string name="close">close</string>
+    <string name="add_to_favourites">Add to Favourites</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="date">Date</string>
+    <string name="search">Search!</string>
+    <string name="nasa_earth_imagery_database">NASA Earth Imagery Database</string>
+    <string name="hello_world">Hello world</string>
+    <string name="version">Version</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="favourites">Favourites</string>
 </resources>
