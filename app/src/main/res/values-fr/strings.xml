@@ -3,16 +3,16 @@
     <string name="searchActivityButtonString">Rechercher</string>
     <string name="MainActivityTitle">NASA Imagerie de la Terre</string>
     <string name="favouritesActivityButtonString">Favourites</string>
-    <string name="help">Help</string>
+    <string name="help">Aider</string>
     <string name="open">open</string>
     <string name="close">close</string>
-    <string name="add_to_favourites">Add to Favourites</string>
+    <string name="add_to_favourites">Ajouter aux Favoris</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
     <string name="date">Date</string>
-    <string name="search">Search!</string>
-    <string name="nasa_earth_imagery_database">NASA Earth Imagery Database</string>
+    <string name="search">Rechercher!</string>
+    <string name="nasa_earth_imagery_database">NASA Imagerie de la Terre</string>
     <string name="version">Version</string>
-    <string name="main_menu">Main Menu</string>
-    <string name="favourites">Favourites</string>
+    <string name="main_menu">Menu Principal</string>
+    <string name="favourites">Favoris</string>
 </resources>
